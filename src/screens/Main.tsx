@@ -14,9 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges UI.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Box, Typography } from '@material-ui/core';
 import React from 'react';
-
+import { Box, Typography } from '@material-ui/core';
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import { makeStyles } from '@material-ui/core/styles';
 import { BoxSidebar, BoxUI, ButtonExt, StorageDrawer, MenuAction, NetworkSides, NetworkStats } from '../components';
 import CustomCall from '../components/CustomCall';
 import ExtensionAccountCheck from '../components/ExtensionAccountCheck';
@@ -30,6 +31,15 @@ import { useGUIContext } from '../contexts/GUIContextProvider';
 import { TransactionTypes } from '../types/transactionTypes';
 import { MenuActionItemsProps } from '../types/guiTypes';
 
+import BridgedLocalWrapper from '../components/BridgedLocalWrapper';
+
+const useStyles = makeStyles(() => ({
+  root: {
+    marginLeft: 'auto',
+    maxHeight: '25px'
+  }
+}));
+
 const ActionComponents = {
   [TransactionTypes.TRANSFER]: <Transfer />,
   [TransactionTypes.REMARK]: <Remark />,
@@ -37,8 +47,18 @@ const ActionComponents = {
 };
 
 function Main() {
-  const { actions, action, setAction } = useGUIContext();
+  const classes = useStyles();
+  const { actions, action, setAction, isBridged, setBridged } = useGUIContext();
   const searchItems = (choice: TransactionTypes) => actions.find((x: MenuActionItemsProps) => x.type === choice);
+
+  const handleOnSwitch = (event: React.MouseEvent<HTMLElement>, newAlignment: string | null) => {
+    setBridged(Boolean(newAlignment));
+  };
+
+  // To remove this check once the whole functionality is ready.
+  const isDev = process.env.REACT_APP_IS_DEVELOPMENT === 'true';
+  // TODO: ToggleButtonGroup needs to contain the colors designed by custom css.
+  // color property is not working for some reason.
 
   return (
     <>
@@ -46,13 +66,30 @@ function Main() {
         <div>
           <Typography variant="button">Bridges UI</Typography>
           <NetworkSides />
-          <NetworkStats />
+          <BridgedLocalWrapper blurred>
+            <NetworkStats />
+          </BridgedLocalWrapper>
           <StorageDrawer />
         </div>
         <ButtonExt> Help & Feedback </ButtonExt>
       </BoxSidebar>
       <BoxUI>
-        <MenuAction actions={actions} action={action} changeMenu={setAction} />
+        <Box component="div" display="flex" marginY={2} textAlign="left" width="100%">
+          <MenuAction actions={actions} action={action} changeMenu={setAction} />
+          {isDev && (
+            <ToggleButtonGroup
+              size="small"
+              value={isBridged}
+              exclusive
+              onChange={handleOnSwitch}
+              classes={{ root: classes.root }}
+            >
+              <ToggleButton value={false}>Local</ToggleButton>
+              <ToggleButton value={true}>Bridge</ToggleButton>
+            </ToggleButtonGroup>
+          )}
+        </Box>
+
         <ExtensionAccountCheck component={<Sender />} />
         <Box marginY={2} textAlign="center" width="100%">
           <ArrowDownwardIcon fontSize="large" color="primary" />
