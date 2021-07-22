@@ -15,6 +15,7 @@
 // along with Parity Bridges UI.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useContext, useReducer, useEffect } from 'react';
+import useTransactionsStatus from '../hooks/context/useTransactionsStatus';
 import transactionReducer from '../reducers/transactionReducer';
 import { TransactionState, TransactionsActionType, TransactionDisplayPayload } from '../types/transactionTypes';
 import { TransactionActionCreators } from '../actions/transactionActions';
@@ -46,7 +47,7 @@ export function TransactionContextProvider(props: TransactionContextProviderProp
   const { children = null } = props;
   const { account } = useAccountContext();
 
-  const [transaction, dispatchTransaction] = useReducer(transactionReducer, {
+  const [transactionsState, dispatchTransaction] = useReducer(transactionReducer, {
     senderAccount: null,
     transferAmount: null,
     transferAmountError: null,
@@ -57,6 +58,7 @@ export function TransactionContextProvider(props: TransactionContextProviderProp
     unformattedReceiverAddress: null,
     derivedReceiverAccount: null,
     genericReceiverAccount: null,
+    evaluatingTransactions: false,
     transactions: [],
     transactionDisplayPayload: {} as TransactionDisplayPayload,
     transactionRunning: false,
@@ -69,12 +71,14 @@ export function TransactionContextProvider(props: TransactionContextProviderProp
     payloadHex: null
   });
 
+  useTransactionsStatus(transactionsState.transactions, transactionsState.evaluatingTransactions, dispatchTransaction);
+
   useEffect((): void => {
     dispatchTransaction(TransactionActionCreators.setSenderAccount(account ? account.address : null));
   }, [account, dispatchTransaction]);
 
   return (
-    <TransactionContext.Provider value={transaction}>
+    <TransactionContext.Provider value={transactionsState}>
       <UpdateTransactionContext.Provider value={{ dispatchTransaction }}>{children}</UpdateTransactionContext.Provider>
     </TransactionContext.Provider>
   );
