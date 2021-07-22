@@ -14,11 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges UI.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useContext, useReducer, useEffect } from 'react';
-import transactionReducer from '../reducers/transactionReducer';
-import { TransactionState, TransactionsActionType, TransactionDisplayPayload } from '../types/transactionTypes';
+import React, { useContext, useEffect, useReducer } from 'react';
 import { TransactionActionCreators } from '../actions/transactionActions';
+import transactionReducer from '../reducers/transactionReducer';
+import {
+  TransactionState,
+  TransactionsActionType,
+  TransactionDisplayPayload,
+  TransactionTypes
+} from '../types/transactionTypes';
 import { useAccountContext } from './AccountContextProvider';
+import { useGUIContext } from './GUIContextProvider';
 
 interface TransactionContextProviderProps {
   children: React.ReactElement;
@@ -45,10 +51,13 @@ export function useUpdateTransactionContext() {
 export function TransactionContextProvider(props: TransactionContextProviderProps): React.ReactElement {
   const { children = null } = props;
   const { account } = useAccountContext();
-
+  const { action } = useGUIContext();
   const [transaction, dispatchTransaction] = useReducer(transactionReducer, {
     senderAccount: null,
     transferAmount: null,
+    remarkInput: '0x',
+    customCallInput: '0x',
+    weightInput: '',
     transferAmountError: null,
     estimatedFee: null,
     estimatedFeeError: null,
@@ -66,12 +75,15 @@ export function TransactionContextProvider(props: TransactionContextProviderProp
     formatFound: null,
     payload: null,
     payloadError: null,
-    payloadHex: null
+    payloadHex: null,
+    action: TransactionTypes.TRANSFER
   });
 
   useEffect((): void => {
-    dispatchTransaction(TransactionActionCreators.setSenderAccount(account ? account.address : null));
-  }, [account, dispatchTransaction]);
+    dispatchTransaction(
+      TransactionActionCreators.combineReducers({ senderAccount: account ? account.address : null, action })
+    );
+  }, [account, action]);
 
   return (
     <TransactionContext.Provider value={transaction}>
