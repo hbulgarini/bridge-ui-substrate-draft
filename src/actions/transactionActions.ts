@@ -25,12 +25,10 @@ import {
 enum TransactionActionTypes {
   SET_TRANSFER_AMOUNT = 'SET_TRANSFER_AMOUNT',
   SET_REMARK_INPUT = 'SET_REMARK_INPUT',
-  SET_ESTIMATED_FEE = 'SET_ESTIMATED_FEE',
-  SET_PAYLOAD = 'SET_PAYLOAD',
-  SET_PAYLOAD_ERROR = 'SET_PAYLOAD_ERROR',
   SET_RECEIVER = 'SET_RECEIVER',
   SET_RECEIVER_ADDRESS = 'SET_RECEIVER_ADDRESS',
   SET_RECEIVER_VALIDATION = 'SET_RECEIVER_VALIDATION',
+  SET_PAYLOAD_ESTIMATED_FEE = 'SET_PAYLOAD_ESTIMATED_FEE',
   COMBINE_REDUCERS = 'COMBINE_REDUCERS',
   CREATE_TRANSACTION_STATUS = 'CREATE_TRANSACTION_STATUS',
   UPDATE_CURRENT_TRANSACTION_STATUS = 'UPDATE_CURRENT_TRANSACTION_STATUS',
@@ -48,20 +46,18 @@ const setTransferAmount = (transferAmount: string | null, chainDecimals?: number
   };
 };
 
-const setEstimatedFee = (
-  estimatedFeeError: string | null,
-  estimatedFee: string | null,
-  estimatedFeeLoading: boolean
-) => {
-  return {
-    payload: { estimatedFee, estimatedFeeError, estimatedFeeLoading },
-    type: TransactionActionTypes.SET_ESTIMATED_FEE
-  };
+type PayloadEstimatedFee = {
+  payload: TransactionPayload | null;
+  estimatedFee: string | null;
 };
 
-const setPayload = (payloadError: string | null, payload: TransactionPayload | null) => ({
-  payload: { payload, payloadError },
-  type: TransactionActionTypes.SET_PAYLOAD
+const setPayloadEstimatedFee = (
+  payloadEstimatedFeeError: string | null,
+  payloadEstimatedFee: PayloadEstimatedFee,
+  payloadEstimatedFeeLoading: boolean
+) => ({
+  payload: { payloadEstimatedFee, payloadEstimatedFeeError, payloadEstimatedFeeLoading },
+  type: TransactionActionTypes.SET_PAYLOAD_ESTIMATED_FEE
 });
 
 const setReceiverAddress = (receiverAddress: string | null) => ({
@@ -127,14 +123,13 @@ const TransactionActionCreators = {
   setReceiverAddress,
   setReceiver,
   setTransferAmount,
+  setPayloadEstimatedFee,
   setCustomCallInput,
   setWeightInput,
   setRemarkInput,
-  setEstimatedFee,
   setTransactionRunning,
   createTransactionStatus,
   updateTransactionStatus,
-  setPayload,
   reset
 };
 

@@ -16,6 +16,8 @@
 
 import React, { useContext, useEffect, useReducer } from 'react';
 import { TransactionActionCreators } from '../actions/transactionActions';
+import useEstimatedFeePayload from '../hooks/transactions/useEstimatedFeePayload';
+import useResetTransactionState from '../hooks/transactions/useResetTransactionState';
 import transactionReducer from '../reducers/transactionReducer';
 import {
   TransactionState,
@@ -52,7 +54,7 @@ export function TransactionContextProvider(props: TransactionContextProviderProp
   const { children = null } = props;
   const { account } = useAccountContext();
   const { action } = useGUIContext();
-  const [transaction, dispatchTransaction] = useReducer(transactionReducer, {
+  const [transactionState, dispatchTransaction] = useReducer(transactionReducer, {
     senderAccount: null,
     transferAmount: null,
     remarkInput: '0x',
@@ -60,8 +62,6 @@ export function TransactionContextProvider(props: TransactionContextProviderProp
     weightInput: '',
     transferAmountError: null,
     estimatedFee: null,
-    estimatedFeeError: null,
-    estimatedFeeLoading: false,
     receiverAddress: null,
     unformattedReceiverAddress: null,
     derivedReceiverAccount: null,
@@ -74,10 +74,14 @@ export function TransactionContextProvider(props: TransactionContextProviderProp
     showBalance: false,
     formatFound: null,
     payload: null,
-    payloadError: null,
     payloadHex: null,
+    payloadEstimatedFeeError: null,
+    payloadEstimatedFeeLoading: false,
     action: TransactionTypes.TRANSFER
   });
+
+  useResetTransactionState(action, dispatchTransaction);
+  useEstimatedFeePayload(transactionState, dispatchTransaction);
 
   useEffect((): void => {
     dispatchTransaction(
@@ -86,7 +90,7 @@ export function TransactionContextProvider(props: TransactionContextProviderProp
   }, [account, action]);
 
   return (
-    <TransactionContext.Provider value={transaction}>
+    <TransactionContext.Provider value={transactionState}>
       <UpdateTransactionContext.Provider value={{ dispatchTransaction }}>{children}</UpdateTransactionContext.Provider>
     </TransactionContext.Provider>
   );
