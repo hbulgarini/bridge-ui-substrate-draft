@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "https://paritytech.github.io/parity-bridges-ui/static/css/main.6dea0f05.chunk.css",
+    "main.js": "https://paritytech.github.io/parity-bridges-ui/static/js/main.5a5b650c.chunk.js",
+    "main.js.map": "https://paritytech.github.io/parity-bridges-ui/static/js/main.5a5b650c.chunk.js.map",
+    "runtime-main.js": "https://paritytech.github.io/parity-bridges-ui/static/js/runtime-main.51f049c7.js",
+    "runtime-main.js.map": "https://paritytech.github.io/parity-bridges-ui/static/js/runtime-main.51f049c7.js.map",
+    "static/js/2.69ec232e.chunk.js": "https://paritytech.github.io/parity-bridges-ui/static/js/2.69ec232e.chunk.js",
+    "static/js/2.69ec232e.chunk.js.map": "https://paritytech.github.io/parity-bridges-ui/static/js/2.69ec232e.chunk.js.map",
+    "index.html": "https://paritytech.github.io/parity-bridges-ui/index.html",
+    "static/css/main.6dea0f05.chunk.css.map": "https://paritytech.github.io/parity-bridges-ui/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.69ec232e.chunk.js.LICENSE.txt": "https://paritytech.github.io/parity-bridges-ui/static/js/2.69ec232e.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.51f049c7.js",
+    "static/js/2.69ec232e.chunk.js",
+    "static/css/main.6dea0f05.chunk.css",
+    "static/js/main.5a5b650c.chunk.js"
+  ]
+}
